@@ -99,6 +99,9 @@
       thisProduct.priceElem = thisProduct.element.querySelector(
         select.menuProduct.priceElem
       );
+      thisProduct.imageWrapper = thisProduct.element.querySelector(
+        select.menuProduct.imageWrapper
+      );
     }
 
     initAccordion() {
@@ -168,6 +171,19 @@
           const optionSelected =
             formData.hasOwnProperty(paramId) &&
             formData[paramId].indexOf(optionId) > -1;
+
+          const className = `${paramId}-${optionId}`;
+          const images = thisProduct.imageWrapper.querySelectorAll('img');
+
+          for (let img of images) {
+            if (optionSelected && img.classList.contains(className)) {
+              img.classList.add('active');
+            } else if (!optionSelected && img.classList.contains(className)) {
+              img.classList.remove('active');
+            }
+          }
+
+          /* */
 
           /* START IF: if option is selected and option is not default */
           if (optionSelected && !option.default) {
