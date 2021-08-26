@@ -152,7 +152,6 @@
     processOrder() {
       const thisProduct = this;
       const formData = utils.serializeFormToObject(thisProduct.form);
-      console.log('formData', formData);
 
       //create variable price, get defualt price
       let price = thisProduct.data.price;
@@ -161,22 +160,28 @@
       for (let paramId in thisProduct.data.params) {
         /* save the element in thisProduct.data.params with key paramId as const param */
         const param = thisProduct.data.params[paramId];
-        console.log('param', param.options);
 
         /* START LOOP for each optionID  in param.options */
-        for (let optionID in param.options) {
+        for (let optionId in param.options) {
           /* save the element in param.options with key options */
-          const option = param.options[optionID];
-          console.log('label', option.label);
-          console.log('price', option.price);
+          const option = param.options[optionId];
+          const optionSelected =
+            formData.hasOwnProperty(paramId) &&
+            formData[paramId].indexOf(optionId) > -1;
+
+          /* START IF: if option is selected and option is not default */
+          if (optionSelected && !option.default) {
+            /* add price of option to variable price */
+            price += option.price;
+            /*START ELSE IF: option is not selected and option is default */
+          } else if (!optionSelected && option.default) {
+            /* deduct prie of option from price */
+            price -= option.price;
+          }
         }
       }
 
-      // if option is checked and is not default increase product price
-      // if option is not checked and is default decrease product price
-      //end loop
-      // end loop
-      //change price of element
+      thisProduct.priceElem.innerHTML = price;
     }
   }
 
