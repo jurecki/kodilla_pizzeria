@@ -312,20 +312,17 @@
       const thisWidget = this;
 
       thisWidget.input.addEventListener('change', function () {
-        console.log('input');
         thisWidget.setValue(thisWidget.input.value);
       });
 
       thisWidget.linkDecrease.addEventListener('click', function (e) {
         e.preventDefault();
         thisWidget.setValue(thisWidget.value - 1);
-        console.log('zmniejszeam o 1');
       });
 
       thisWidget.linkIncrease.addEventListener('click', function (e) {
         e.preventDefault();
         thisWidget.setValue(thisWidget.value + 1);
-        console.log('zwiększam o 1');
       });
     }
 
@@ -387,14 +384,17 @@
   class CartProduct {
     constructor(menuProduct, element) {
       const thisCartProduct = this;
-      console.log(menuProduct);
+
       thisCartProduct.id = menuProduct.id;
       thisCartProduct.name = menuProduct.name;
+      thisCartProduct.price = menuProduct.price;
+      thisCartProduct.priceSingle = menuProduct.priceSingle;
+      thisCartProduct.amount = menuProduct.amount;
 
       thisCartProduct.params = JSON.parse(JSON.stringify(menuProduct.params));
 
       thisCartProduct.getElements(element);
-
+      thisCartProduct.initAmountWidget();
       console.log(thisCartProduct);
     }
 
@@ -402,7 +402,7 @@
       const thisCartProduct = this;
       thisCartProduct.dom = {};
       thisCartProduct.dom.wrapper = element;
-      console.log('element', element);
+
       thisCartProduct.dom.amountWidget = element.querySelector(
         select.cartProduct.amountWidget
       );
@@ -413,6 +413,21 @@
       thisCartProduct.dom.remove = element.querySelector(
         select.cartProduct.remove
       );
+    }
+
+    initAmountWidget() {
+      const thisCartProduct = this;
+      thisCartProduct.amountWidget = new AmountWidget(
+        thisCartProduct.dom.amountWidget
+      );
+
+      thisCartProduct.dom.amountWidget.addEventListener('updated', function () {
+        thisCartProduct.amount = thisCartProduct.amountWidget.value;
+        thisCartProduct.price =
+          thisCartProduct.priceSingle * thisCartProduct.amount;
+
+        thisCartProduct.dom.price.innerHTML = thisCartProduct.price;
+      });
     }
   }
 
