@@ -184,6 +184,7 @@
       thisProduct.cartButton.addEventListener('click', function (event) {
         event.preventDefault();
         thisProduct.processOrder();
+        thisProduct.addToCart();
       });
     }
     processOrder() {
@@ -192,7 +193,7 @@
 
       //create variable price, get defualt price
       let price = thisProduct.data.price;
-
+      thisProduct.params = {};
       /* START LOOP: for each pramId in thisProduct.data.param */
       for (let paramId in thisProduct.data.params) {
         /* save the element in thisProduct.data.params with key paramId as const param */
@@ -201,6 +202,7 @@
         /* START LOOP for each optionID  in param.options */
         for (let optionId in param.options) {
           /* save the element in param.options with key options */
+
           const option = param.options[optionId];
           const optionSelected =
             formData.hasOwnProperty(paramId) &&
@@ -208,6 +210,16 @@
 
           const className = `${paramId}-${optionId}`;
           const images = thisProduct.imageWrapper.querySelectorAll('img');
+
+          if (optionSelected) {
+            if (!thisProduct.params[paramId]) {
+              thisProduct.params[paramId] = {
+                label: param.label,
+                options: {},
+              };
+            }
+            thisProduct.params[paramId].options[optionId] = option.label;
+          }
 
           for (let img of images) {
             if (optionSelected && img.classList.contains(className)) {
@@ -230,8 +242,12 @@
           }
         }
       }
-      price *= thisProduct.amountWidget.value;
-      thisProduct.priceElem.innerHTML = price;
+      thisProduct.priceSingle = price;
+      thisProduct.price =
+        thisProduct.priceSingle * thisProduct.amountWidget.value;
+      thisProduct.priceElem.innerHTML = thisProduct.price;
+
+      console.log(thisProduct.params);
     }
     initAmountWidget() {
       const thisProduct = this;
@@ -240,6 +256,12 @@
       thisProduct.amountWidgetElem.addEventListener('updated', function () {
         thisProduct.processOrder();
       });
+    }
+    addToCart() {
+      const thisProduct = this;
+      thisProduct.name = thisProduct.data.name;
+      thisProduct.amount = thisProduct.amountWidget.value;
+      app.cart.add(thisProduct);
     }
   }
 
@@ -332,10 +354,11 @@
       thisCart.dom = {};
 
       thisCart.dom.wrapper = element;
-      console.log('element', element);
+
       thisCart.dom.toogleTrigger = element.querySelector(
         select.cart.toggleTrigger
       );
+      thisCart.dom.productList = element.querySelector(select.cart.productList);
     }
 
     initAction() {
@@ -345,6 +368,17 @@
         e.preventDefault();
         thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
       });
+    }
+
+    add(menuProduct) {
+      const thisCart = this;
+
+      const generatedHTML = templates.cartProduct(menuProduct);
+      const generatedDOM = utils.createDOMFromHTML(generatedHTML);
+      console.log(generatedDOM);
+      thisCart.dom.productList.appendChild(generatedDOM);
+
+      console.log('adding product', menuProduct);
     }
   }
 
