@@ -315,6 +315,39 @@
     }
   }
 
+  class Cart {
+    constructor(element) {
+      const thisCart = this;
+
+      thisCart.products = [];
+
+      thisCart.getElements(element);
+      thisCart.initAction();
+      console.log('newCart', thisCart);
+    }
+
+    getElements(element) {
+      const thisCart = this;
+
+      thisCart.dom = {};
+
+      thisCart.dom.wrapper = element;
+      console.log('element', element);
+      thisCart.dom.toogleTrigger = element.querySelector(
+        select.cart.toggleTrigger
+      );
+    }
+
+    initAction() {
+      const thisCart = this;
+
+      thisCart.dom.toogleTrigger.addEventListener('click', function (e) {
+        e.preventDefault();
+        thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
+      });
+    }
+  }
+
   const app = {
     initMenu: function () {
       const thisApp = this;
@@ -330,6 +363,13 @@
       }
     },
 
+    initCart: function () {
+      const thisApp = this;
+
+      const cartElem = document.querySelector(select.containerOf.cart);
+      thisApp.cart = new Cart(cartElem);
+    },
+
     init: function () {
       const thisApp = this;
       console.log('*** App starting ***');
@@ -340,6 +380,7 @@
 
       thisApp.initData();
       thisApp.initMenu();
+      thisApp.initCart();
     },
   };
 
