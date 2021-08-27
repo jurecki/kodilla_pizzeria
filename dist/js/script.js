@@ -375,10 +375,44 @@
 
       const generatedHTML = templates.cartProduct(menuProduct);
       const generatedDOM = utils.createDOMFromHTML(generatedHTML);
-      console.log(generatedDOM);
       thisCart.dom.productList.appendChild(generatedDOM);
 
       console.log('adding product', menuProduct);
+
+      thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
+      console.log('thisCart.producrs', thisCart.products);
+    }
+  }
+
+  class CartProduct {
+    constructor(menuProduct, element) {
+      const thisCartProduct = this;
+      console.log(menuProduct);
+      thisCartProduct.id = menuProduct.id;
+      thisCartProduct.name = menuProduct.name;
+
+      thisCartProduct.params = JSON.parse(JSON.stringify(menuProduct.params));
+
+      thisCartProduct.getElements(element);
+
+      console.log(thisCartProduct);
+    }
+
+    getElements(element) {
+      const thisCartProduct = this;
+      thisCartProduct.dom = {};
+      thisCartProduct.dom.wrapper = element;
+      console.log('element', element);
+      thisCartProduct.dom.amountWidget = element.querySelector(
+        select.cartProduct.amountWidget
+      );
+      thisCartProduct.dom.price = element.querySelector(
+        select.cartProduct.price
+      );
+      thisCartProduct.dom.edit = element.querySelector(select.cartProduct.edit);
+      thisCartProduct.dom.remove = element.querySelector(
+        select.cartProduct.remove
+      );
     }
   }
 
