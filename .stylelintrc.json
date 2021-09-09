@@ -11,6 +11,7 @@
     "declaration-block-trailing-semicolon": "always",
     "indentation": 2,
     "max-empty-lines": 2,
+    "allowSyntheticDefaultImports": true,
     "max-nesting-depth": [3, {
       "ignore": ["pseudo-classes"]
     }],

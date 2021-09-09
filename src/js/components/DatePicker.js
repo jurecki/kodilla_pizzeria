@@ -1,8 +1,8 @@
+/* global flatpickr  */ // eslint-disable-line no-unused-vars
+
 import { settings, select } from '../settings.js';
 import BaseWidget from './BaseWidget.js';
 import { utils } from '../utils.js';
-
-// import flatpickr from '/flatpickr';
 
 class DatePicker extends BaseWidget {
   constructor(wrapper) {
@@ -31,13 +31,13 @@ class DatePicker extends BaseWidget {
           return date.getDay() === 1;
         },
       ],
-      onChange: function (selectedDates, dateStr, instance) {
+      onChange: function (selectedDates, dateStr) {
         thisWidget.value = dateStr;
-        console.log('thisWidget.value', thisWidget.value);
+        // console.log('thisWidget.value', thisWidget.value);
       },
     });
 
-    console.log('data', thisWidget.value);
+    // console.log('data', thisWidget.value);
   }
 
   parseValue(value) {
