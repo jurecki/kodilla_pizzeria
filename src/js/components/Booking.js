@@ -1,4 +1,5 @@
-import { templates, select } from '../settings.js';
+import { templates, select, settings } from '../settings.js';
+import { utils } from '../utils.js';
 import AmountWidget from './AmountWidget.js';
 import DatePicker from './DatePicker.js';
 import HourPicker from './HourPicker.js';
@@ -9,6 +10,73 @@ class Booking {
 
     thisBooking.render(booking);
     thisBooking.initWidget();
+    thisBooking.getData();
+  }
+
+  getData() {
+    const thisBooking = this;
+
+    const startDateParam =
+      settings.db.dateStartParamKey +
+      '=' +
+      utils.dateToStr(thisBooking.datePicker.minDate);
+    const endDateParam =
+      settings.db.dateEndParamKey +
+      '=' +
+      utils.dateToStr(thisBooking.datePicker.maxDate);
+
+    const params = {
+      booking: [startDateParam, endDateParam],
+
+      eventsCurrent: [settings.db.notRepeatParam, startDateParam, endDateParam],
+
+      eventsRepeat: [settings.db.repeatParam, endDateParam],
+    };
+
+    // console.log('param', params);
+
+    const urls = {
+      booking:
+        settings.db.url +
+        '/' +
+        settings.db.booking +
+        '?' +
+        params.booking.join('&'),
+      eventsCurrent:
+        settings.db.url +
+        '/' +
+        settings.db.event +
+        '?' +
+        params.eventsCurrent.join('&'),
+      eventsRepeat:
+        settings.db.url +
+        '/' +
+        settings.db.event +
+        '?' +
+        params.eventsRepeat.join('&'),
+    };
+
+    console.log(urls.booking);
+    Promise.all([
+      fetch(urls.booking),
+      fetch(urls.eventsCurrent),
+      fetch(urls.eventsRepeat),
+    ])
+      .then(function (allResponse) {
+        const bookingResponse = allResponse[0];
+        const eventsCurrentResponse = allResponse[1];
+        const eventsRepeatResponse = allResponse[2];
+        return Promise.all([
+          bookingResponse.json(),
+          eventsCurrentResponse.json(),
+          eventsRepeatResponse.json(),
+        ]);
+      })
+      .then(function ([bookings, eventsCurrentResponse, eventsRepeatResponse]) {
+        console.log(bookings);
+        console.log(eventsCurrentResponse);
+        console.log(eventsRepeatResponse);
+      });
   }
 
   render(bookingWrapper) {
